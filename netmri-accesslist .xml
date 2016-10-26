@@ -1,3 +1,4 @@
+@@ -0,0 +1,63 @@
 <PolicyRuleLogic editor="raw-xml" xmlns='http://www.infoblox.com/NetworkAutomation/1.0/ScriptXml'>
   <Assign variable='pass-count'>
     <Expr value='0'/>
@@ -10,8 +11,8 @@
       <ConfigFileCheck op='contains-all'>ip nat outside</ConfigFileCheck>
       <Then>
         <If>
-          <ConfigFileCheck op='contains-all'>ip access-group ism30acl out
-ip access-group wantolan in
+          <ConfigFileCheck op='contains-all'>ip access-group {access-groupname-1} out
+ip access-group {access-groupname-2} in
 </ConfigFileCheck>
           <Then>
             <Assign variable='pass-count'>
@@ -42,7 +43,7 @@ ip access-group wantolan in
             <Expr variable='pass-count'/>
             <Expr value=', '/>
             <Expr variable='fail-count'/>
-            <Expr value=': One or both of the in or outbound ACLs (ism30acl, wantolan) is NOT applied to the outside NAT interface.'/>
+            <Expr value=': One or both of the in or outbound ACLs ({access-groupname-1}, {access-groupname-1}) is NOT applied to the outside NAT interface.'/>
           </Expr>
         </PolicyRuleFail>
       </Return>
@@ -61,3 +62,4 @@ ip access-group wantolan in
     </Else>
   </If>
 </PolicyRuleLogic>
+\ No newline at end of file
