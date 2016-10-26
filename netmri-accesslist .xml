@@ -1,0 +1,63 @@
+<PolicyRuleLogic editor="raw-xml" xmlns='http://www.infoblox.com/NetworkAutomation/1.0/ScriptXml'>
+  <Assign variable='pass-count'>
+    <Expr value='0'/>
+  </Assign>
+  <Assign variable='fail-count'>
+    <Expr value='0'/>
+  </Assign>
+  <ConfigBlockCheck block-end='^!$' block-start='^interface *thernet*' boundary-method='regexp' end-on-block-start='true'>
+    <If>
+      <ConfigFileCheck op='contains-all'>ip nat outside</ConfigFileCheck>
+      <Then>
+        <If>
+          <ConfigFileCheck op='contains-all'>ip access-group ism30acl out
+ip access-group wantolan in
+</ConfigFileCheck>
+          <Then>
+            <Assign variable='pass-count'>
+              <Expr op='+'>
+                <Expr variable='pass-count'/>
+                <Expr value='1'/>
+              </Expr>
+            </Assign>
+          </Then>
+          <Else>
+            <Assign variable='fail-count'>
+              <Expr op='+'>
+                <Expr variable='fail-count'/>
+                <Expr value='1'/>
+              </Expr>
+            </Assign>
+          </Else>
+        </If>
+      </Then>
+    </If>
+  </ConfigBlockCheck>
+  <If>
+    <Expr variable='fail-count'/>
+    <Then>
+      <Return>
+        <PolicyRuleFail>
+          <Expr op='concat'>
+            <Expr variable='pass-count'/>
+            <Expr value=', '/>
+            <Expr variable='fail-count'/>
+            <Expr value=': One or both of the in or outbound ACLs (ism30acl, wantolan) is NOT applied to the outside NAT interface.'/>
+          </Expr>
+        </PolicyRuleFail>
+      </Return>
+    </Then>
+    <Else>
+      <Return>
+        <PolicyRulePass>
+          <Expr op='concat'>
+            <Expr variable='pass-count'/>
+            <Expr value=', '/>
+            <Expr variable='fail-count'/>
+            <Expr value=': The inbound and outbound access lists are applied to the outside NAT interface.'/>
+          </Expr>
+        </PolicyRulePass>
+      </Return>
+    </Else>
+  </If>
+</PolicyRuleLogic>
